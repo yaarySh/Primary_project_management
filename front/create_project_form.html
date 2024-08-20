@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>Heroic Features - Start Bootstrap Template</title>
+    <!-- Favicon-->
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico" />
+    <!-- Bootstrap icons-->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+    <!-- Core theme CSS (includes Bootstrap)-->
+    <link href="/static/styles.css" rel="stylesheet" />
+  </head>
+  <body>
+    <!-- Responsive navbar-->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container px-lg-5">
+        <a class="navbar-brand" href="#!">Projects Assistent</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="/home"
+                >Home</a
+              >
+            </li>
+            <li class="nav-item"><a class="nav-link" href="#!">About</a></li>
+            <li class="nav-item"><a class="nav-link" href="#!">Contact</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <!-- Page Content-->
+    <div class="container mt-5">
+      <h1>Create a New Project</h1>
+      <form id="createProjectForm" class="mt-4">
+        <div class="mb-3">
+          <label for="name" class="form-label">Project Name</label>
+          <input
+            type="text"
+            class="form-control"
+            id="name"
+            name="name"
+            required
+          />
+        </div>
+        <div class="mb-3">
+          <label for="description" class="form-label">Description</label>
+          <textarea
+            class="form-control"
+            id="description"
+            name="description"
+            rows="3"
+            required
+          ></textarea>
+        </div>
+        <div class="mb-3">
+          <label for="start_date" class="form-label">Start Date</label>
+          <input
+            type="date"
+            class="form-control"
+            id="start_date"
+            name="start_date"
+            required
+          />
+        </div>
+        <div class="mb-3">
+          <label for="end_date" class="form-label">End Date</label>
+          <input
+            type="date"
+            class="form-control"
+            id="end_date"
+            name="end_date"
+          />
+        </div>
+        <button type="submit" class="btn btn-primary">Create Project</button>
+      </form>
+
+      <div id="projectList" class="mt-5"></div>
+    </div>
+
+    <!-- Footer-->
+    <footer class="py-5 bg-dark">
+      <div class="container">
+        <p class="m-0 text-center text-white">
+          Copyright &copy; Your Website 2023
+        </p>
+      </div>
+    </footer>
+    <!-- Bootstrap core JS-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Core theme JS-->
+    <script src="/js/scripts.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+      document.getElementById("createProjectForm").onsubmit = async function (
+        event
+      ) {
+        event.preventDefault();
+
+        const formData = new FormData(event.target);
+        const data = Object.fromEntries(formData.entries());
+        console.log(formData);
+
+        try {
+          const response = await axios.post("/projects", data);
+          alert("Project created successfully!");
+          loadProjects();
+        } catch (error) {
+          console.error("Error creating project:", error);
+        }
+      };
+
+      async function loadProjects() {
+        try {
+          const response = await axios.get("/projects");
+          const projects = response.data;
+
+          let projectListHtml = '<h2>Projects</h2><ul class="list-group">';
+          projects.forEach((project) => {
+            projectListHtml += `<li class="list-group-item">${project.name} - ${project.description} (Start: ${project.start_date}, End: ${project.end_date})</li>`;
+          });
+          projectListHtml += "</ul>";
+
+          document.getElementById("projectList").innerHTML = projectListHtml;
+        } catch (error) {
+          console.error("Error fetching projects:", error);
+        }
+      }
+
+      // Load projects on page load
+      loadProjects();
+    </script>
+  </body>
+</html>

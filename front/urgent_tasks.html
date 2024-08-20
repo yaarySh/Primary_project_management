@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>Urgent Tasks</title>
+    <!-- Favicon-->
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico" />
+    <!-- Bootstrap icons-->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+    <!-- Core theme CSS (includes Bootstrap)-->
+    <link href="/static/styles.css" rel="stylesheet" />
+  </head>
+  <body>
+    <!-- Responsive navbar-->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container px-lg-5">
+        <a class="navbar-brand" href="#!">Projects Assistant</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="/home"
+                >Home</a
+              >
+            </li>
+            <li class="nav-item"><a class="nav-link" href="#!">About</a></li>
+            <li class="nav-item"><a class="nav-link" href="#!">Contact</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <!-- Page Content-->
+    <div class="container mt-5">
+      <h1>Urgent Tasks</h1>
+      <div id="urgentTasksList" class="mt-4"></div>
+    </div>
+
+    <!-- Footer-->
+    <footer class="py-5 bg-dark">
+      <div class="container">
+        <p class="m-0 text-center text-white">
+          Copyright &copy; Your Website 2023
+        </p>
+      </div>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/scripts.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+      async function loadUrgentTasks() {
+        try {
+          const response = await axios.get("/urgent_tasks");
+          const tasks = response.data;
+
+          let taskListHtml = '<ul class="list-group">';
+          if (tasks.length === 0) {
+            taskListHtml +=
+              '<li class="list-group-item">No urgent tasks found.</li>';
+          } else {
+            tasks.forEach((task) => {
+              taskListHtml += `<li class="list-group-item">
+                <strong>${task.title}</strong><br>
+                ${task.description}<br>
+                Due Date: ${task.due_date}<br>
+                Project ID: ${task.project_id}
+              </li>`;
+            });
+          }
+          taskListHtml += "</ul>";
+
+          document.getElementById("urgentTasksList").innerHTML = taskListHtml;
+        } catch (error) {
+          console.error("Error fetching urgent tasks:", error);
+          document.getElementById(
+            "urgentTasksList"
+          ).innerHTML = `<div class="alert alert-danger" role="alert">
+            Error loading tasks. Please try again later.
+          </div>`;
+        }
+      }
+
+      // Load urgent tasks on page load
+      loadUrgentTasks();
+
+      // Refresh the list every 60 seconds
+      setInterval(loadUrgentTasks, 60000);
+    </script>
+  </body>
+</html>
